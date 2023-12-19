@@ -22,35 +22,39 @@ def CreateShapes():
     #Right = 4
     #Left = 5
 
-    #This one is not nesessary as we can create 3 boards and represent all possible solutions with that
+    #V-Shape
+    # []
+    # [][]
+    Palikat.append(shape([['3', '0'], ['3', '4'], ['3', '1'], ['3', '5'], ['2', '0'], ['2', '4'], ['2', '1'], ['2', '5']]))
+    
+    # L-shape
     # [][][]
-    Palikat.append(shape([["0","0"],["2","2"],["4","4"]]))
+    # []
+    Palikat.append(shape([["3","0","0"],["3","4","4"],["3","1","1"],["3","5","5"],["2","0","0"],["2","4","4"],["2","1","1"],["2","5","5"],["5","0","0"],["0","4","4"],["4","1","1"],["1","5","5"],["4","0","0"],["1","5","5"],["4","1","1"],["0","5","5"]]))
 
-    # Iso monimutkainen
-    Palikat.append(shape([['3', '0', '0', '4'], ['5', '0', '0', '3'], ['2', '0', '0', '5'], ['4', '0', '0', '2'], ['3', '4', '4', '1'], ['0', '4', '4', '3'], ['2', '4', '4', '0'], ['1', '4', '4', '2'], ['3', '1', '1', '5'], ['5', '1', '1', '2'], ['2', '1', '1', '4'], ['4', '1', '1', '3'], ['3', '5', '5', '0'], ['0', '5', '5', '2'], ['2', '5', '5', '1'], ['1', '5', '5', '3']]))
-
-
+    #T-shape
     #   []
     # [][][]
     Palikat.append(shape([['0', '0', '12'], ['0', '0', '13'], ['0', '0', '14'], ['0', '0', '15'], ['4', '4', '53'], ['4', '4', '52'], ['4', '4', '50'], ['4', '4', '51'], ['2', '2', '30'], ['2', '2', '31'], ['2', '2', '34'], ['2', '2', '35']]))
 
+    #Z-shape
     # [][]
     #   [][]  
     Palikat.append(shape([['0', '2', '0'], ['0', '3', '0'], ['0', '4', '0'], ['0', '5', '0'], ['2', '0', '2'], ['2', '1', '2'], ['2', '4', '2'], ['2', '5', '2'], ['4', '0', '4'], ['4', '1', '4'], ['4', '2', '4'], ['4', '3', '4']]))
-    
-    # []
-    # [][]
-    Palikat.append(shape([['3', '0'], ['3', '4'], ['3', '1'], ['3', '5'], ['2', '0'], ['2', '4'], ['2', '1'], ['2', '5']]))
-    # 
 
-    #Corner piece
-    Palikat.append(shape([['0', '4', '52'], ['0', '5', '42'], ['0', '4', '53'], ['0', '5', '43'], ['4', '0', '12'], ['5', '0', '12'], ['4', '0', '13'], ['5', '0', '13']]))
-    #Pienempi monimutkainen
+    #A-piece
+    Palikat.append(shape([['3', '0', '5'], ['5', '0', '2'], ['2', '0', '4'], ['5', '0', '3'], ['3', '4', '0'], ['5', '3', '0'], ['2', '5', '0'], ['4', '2', '0'], ['3', '1', '4'], ['5', '1', '3'], ['2', '1', '4'], ['4', '1', '2'], ['3', '5', '1'], ['5', '2', '1'], ['2', '4', '1'], ['4', '3', '1']]))
+    
+    #B-piece
     Palikat.append(shape([['3', '0', '4'], ['5', '0', '3'], ['2', '0', '5'], ['5', '0', '2'], ['3', '4', '1'], ['5', '3', '1'], ['2', '5', '1'], ['4', '2', '1'], ['3', '1', '5'], ['5', '1', '2'], ['2', '1', '5'], ['4', '1', '3'], ['3', '5', '0'], ['5', '2', '0'], ['2', '4', '0'], ['4', '3', '0']]))
+    
+    #P-shape or corner piece
+    Palikat.append(shape([['0', '4', '52'], ['0', '5', '42'], ['0', '4', '53'], ['0', '5', '43'], ['4', '0', '12'], ['5', '0', '12'], ['4', '0', '13'], ['5', '0', '13']]))
     
     return Palikat
 
 def CheckPositions(L1,L2,Area): #Checks if L1 are empty and L2 are not.
+    #Used for cheking if area is impossible to cut of unnessary recursions.
     for i in range(len(L1)):
         if Area[L1[i]] != None:
             return False
@@ -60,6 +64,8 @@ def CheckPositions(L1,L2,Area): #Checks if L1 are empty and L2 are not.
     return True
 
 def ImpossibleSetting(Area):
+    #Checks all 1 and 2 piece holes in the area, as there are only 3 piece parts.
+
     #Corners
     if CheckPositions([0],[1,3,9],Area):
         return False
@@ -235,19 +241,15 @@ def ImpossibleSetting(Area):
         return False
     if CheckPositions([17,26],[8,14,16,23,25],Area):
         return False
-    
-    #print("Area holder didn't fail")
-    
+
     #If all checks fail, then piece is in a good place
     return True
 
 def TestDirection(Area,Directions,AreaIndex,PieceIndex):
-    Debug = False
+    #Tests if piece in direction can fit.
     AreaHolder = Area[:]
     #If already taken, then doesn't work.
     if AreaHolder[AreaIndex] != None:
-        if Debug:
-            print("Spot taken",AreaIndex)
         return False
         
     
@@ -283,60 +285,40 @@ def TestDirection(Area,Directions,AreaIndex,PieceIndex):
         
         #Out of bounds
         if CurIndex < 0 or CurIndex > 26:
-            if Debug:
-                print("Out of bounds")
             return False
 
         #Already taken
         if AreaHolder[CurIndex] != None:
-            if Debug:
-                print(AreaHolder)
-                print("Adding to taken place",CurIndex, " taken by",AreaHolder[CurIndex], "Current pieceindex", PieceIndex)
             return False
 
         AreaHolder[CurIndex] = PieceIndex        
     
     if ImpossibleSetting(AreaHolder):
-        if Debug:
-            print("Yeah")
         return AreaHolder
     else:
-        if Debug:
-            print("Area impossible")
         return False
 
-Branch = [0,None,None,None,None,None,None] #Shows what branch we are on
-Branches = [0,None,None,None,None,None,None] #Shows how many branches are there
-
-def SetBranch(index,num,branches,b):
-    for i in range(index,len(Branch)):
-        Branch[i] = None
-        Branches[i] = None
-    Branch[index] = num
-    Branches[index] = b
-    
-    print(Branch)
-    print(Branches)
-
 def TestPiece(Area,Pieces,PieceIndex):
-    
+#     print("PieceIndex:",PieceIndex)
     global Branch, Branches
     #Checks if board is already full, then returns
-    BoardFull = True
-    for i in range(len(Area)):
-        if Area[i] != None:
-            BoardFull = False
-            break
-    if BoardFull:
-        return Area
+#     BoardFull = True
+#     for i in range(len(Area)):
+#         if Area[i] != None:
+#             BoardFull = False
+#             break
+#     if BoardFull:
+#         print("R1")
+#         return Area
     
     if PieceIndex > 6: #Can't test too far
-        #print("PieceIndex too high!")
+#         print("PieceIndex too high!")
 #         Number += 1
 #         print(Number,"Area (PieceI) is:",Area)
 #         if Number > 1:
 #             while True:
 #                 True
+#         print("R2")
         return Area
     
     AreaHolder = Area[:] #Making new area so old one doesn't change.
@@ -365,40 +347,24 @@ def TestPiece(Area,Pieces,PieceIndex):
         if Result != False and Result != []:
             Final.append(Result)
     
-    if Final != [] and PieceIndex > 1:
+    if Final != [] and PieceIndex > 0:
+#         print("R3")
         return Final[0]
     
+#     print("R4")
     return Final
 
 if __name__ == '__main__':
-    #     start = time.time()
     Pieces = CreateShapes()
-    #for i in range(len(Pieces)):
-    #    print("Piece" + str(i+1),Pieces[i].directions)
-    
-    board1 = []
+
+    Board = []
     for i in range(27):
-        board1.append(None)
-    board1[4] = 0
-    board1[13] = 0
-    board1[22] = 0
-    Result = TestPiece(board1,Pieces,1)
-    
-    board1 = []
-    for i in range(27):
-        board1.append(None)
-    board1[0] = "0"
-    board1[9] = "0"
-    board1[18] = "0"
-    Result += TestPiece(board1,Pieces,1)
-    
-    board1 = []
-    for i in range(27):
-        board1.append(None)
-    board1[1] = "0"
-    board1[10] = "0"
-    board1[19] = "0"
-    Result += TestPiece(board1,Pieces,1)
-    
+        Board.append(None)
+    Result = TestPiece(Board,Pieces,0)
+
     print(Result)
     print(len(Result))
+    
+    
+    #Result is:
+    #[[1, 0, 2, 1, 0, 6, 4, 6, 6, 1, 0, 2, 4, 4, 2, 4, 5, 6, 1, 3, 2, 3, 3, 5, 3, 5, 5], [5, 5, 1, 0, 5, 1, 0, 3, 3, 5, 4, 1, 0, 4, 4, 3, 3, 6, 2, 4, 1, 2, 2, 6, 2, 6, 6], [1, 5, 5, 1, 4, 0, 2, 4, 0, 1, 5, 6, 2, 5, 0, 2, 4, 4, 1, 6, 6, 3, 3, 6, 2, 3, 3], [2, 2, 2, 4, 4, 1, 4, 3, 1, 0, 2, 5, 0, 4, 1, 6, 3, 3, 0, 5, 5, 6, 5, 1, 6, 6, 3], [5, 5, 2, 1, 2, 2, 1, 3, 2, 4, 5, 0, 1, 5, 0, 3, 3, 6, 4, 4, 0, 1, 4, 6, 3, 6, 6], [1, 1, 1, 1, 3, 3, 3, 3, 2, 5, 5, 6, 4, 0, 2, 4, 0, 2, 5, 6, 6, 5, 0, 6, 4, 4, 2], [1, 0, 0, 1, 0, 3, 2, 5, 5, 1, 4, 3, 2, 5, 3, 2, 5, 6, 1, 4, 3, 4, 4, 6, 2, 6, 6], [4, 4, 1, 0, 0, 1, 0, 3, 2, 4, 5, 1, 4, 6, 2, 3, 3, 2, 5, 5, 1, 5, 6, 6, 3, 6, 2], [1, 1, 1, 1, 2, 3, 2, 2, 2, 0, 0, 3, 0, 5, 3, 4, 4, 6, 5, 5, 3, 4, 5, 6, 4, 6, 6], [1, 6, 6, 1, 5, 6, 2, 5, 5, 1, 4, 6, 2, 0, 0, 2, 0, 5, 1, 4, 4, 3, 3, 4, 2, 3, 3], [1, 4, 4, 1, 2, 4, 2, 2, 2, 1, 3, 3, 3, 3, 4, 5, 5, 6, 1, 0, 0, 5, 0, 6, 5, 6, 6], [1, 5, 5, 1, 3, 5, 4, 4, 2, 1, 5, 6, 4, 3, 2, 4, 3, 2, 1, 6, 6, 0, 0, 6, 0, 3, 2], [0, 5, 1, 5, 5, 1, 2, 2, 2, 0, 5, 1, 0, 4, 4, 6, 2, 4, 3, 3, 1, 6, 3, 3, 6, 6, 4], [1, 4, 0, 1, 4, 4, 2, 5, 5, 1, 4, 0, 2, 5, 0, 2, 5, 6, 1, 3, 3, 3, 3, 6, 2, 6, 6], [1, 5, 5, 1, 0, 6, 2, 6, 6, 1, 4, 5, 2, 0, 5, 2, 0, 6, 1, 4, 4, 3, 3, 4, 2, 3, 3], [1, 4, 4, 1, 4, 6, 3, 6, 6, 1, 0, 4, 3, 5, 5, 3, 2, 6, 1, 0, 5, 3, 0, 5, 2, 2, 2], [1, 4, 4, 1, 3, 3, 3, 3, 2, 1, 4, 6, 0, 4, 2, 5, 5, 2, 1, 6, 6, 0, 5, 6, 0, 5, 2], [1, 4, 2, 1, 2, 2, 3, 3, 2, 1, 4, 5, 4, 4, 0, 6, 3, 3, 1, 5, 5, 6, 5, 0, 6, 6, 0], [0, 0, 2, 1, 0, 2, 1, 3, 2, 5, 5, 6, 1, 5, 2, 3, 3, 4, 5, 6, 6, 1, 4, 6, 3, 4, 4], [1, 5, 5, 1, 0, 0, 2, 3, 0, 1, 4, 5, 2, 6, 5, 2, 3, 3, 1, 4, 4, 6, 6, 4, 2, 6, 3], [1, 5, 5, 1, 5, 4, 2, 4, 4, 1, 0, 0, 2, 5, 0, 2, 4, 6, 1, 3, 3, 3, 3, 6, 2, 6, 6], [6, 6, 1, 6, 4, 1, 4, 4, 2, 6, 5, 1, 0, 0, 2, 4, 0, 2, 5, 5, 1, 5, 3, 3, 3, 3, 2], [5, 5, 1, 5, 2, 1, 2, 2, 2, 3, 3, 1, 5, 3, 3, 4, 4, 6, 0, 0, 1, 4, 0, 6, 4, 6, 6], [1, 5, 5, 1, 2, 5, 2, 2, 2, 1, 5, 4, 6, 6, 4, 6, 3, 3, 1, 4, 4, 6, 0, 0, 3, 3, 0], [0, 3, 1, 0, 5, 1, 2, 5, 5, 6, 3, 1, 0, 3, 4, 2, 2, 5, 6, 6, 1, 6, 3, 4, 2, 4, 4], [1, 5, 0, 1, 5, 0, 2, 4, 4, 1, 5, 5, 2, 4, 0, 2, 4, 6, 1, 3, 3, 3, 3, 6, 2, 6, 6], [1, 5, 5, 1, 0, 5, 3, 0, 2, 1, 5, 6, 3, 4, 2, 3, 0, 2, 1, 6, 6, 3, 4, 6, 4, 4, 2], [1, 4, 4, 1, 4, 6, 3, 6, 6, 1, 0, 4, 3, 0, 5, 3, 2, 6, 1, 5, 5, 3, 0, 5, 2, 2, 2], [1, 4, 4, 1, 3, 3, 3, 3, 2, 1, 4, 6, 0, 4, 2, 0, 5, 2, 1, 6, 6, 5, 5, 6, 0, 5, 2], [1, 6, 6, 1, 2, 6, 2, 2, 2, 1, 5, 6, 5, 5, 0, 4, 4, 0, 1, 5, 3, 4, 3, 3, 4, 3, 0], [0, 6, 1, 0, 0, 1, 5, 5, 2, 6, 6, 1, 5, 6, 2, 5, 4, 2, 3, 3, 1, 4, 3, 3, 4, 4, 2], [1, 4, 4, 1, 0, 3, 2, 0, 0, 1, 4, 6, 2, 4, 3, 2, 5, 3, 1, 6, 6, 5, 5, 6, 2, 5, 3], [1, 4, 4, 1, 4, 6, 2, 6, 6, 1, 0, 4, 2, 0, 0, 2, 5, 6, 1, 3, 3, 3, 3, 5, 2, 5, 5], [6, 6, 1, 6, 2, 1, 2, 2, 2, 6, 5, 1, 0, 4, 4, 0, 0, 4, 5, 5, 1, 5, 3, 3, 3, 3, 4], [5, 5, 1, 3, 3, 1, 2, 3, 3, 5, 4, 1, 5, 4, 4, 2, 2, 6, 0, 4, 1, 0, 0, 6, 2, 6, 6], [1, 5, 5, 1, 3, 6, 2, 6, 6, 1, 4, 5, 3, 3, 5, 2, 2, 6, 1, 4, 4, 3, 0, 4, 2, 0, 0], [1, 5, 5, 1, 0, 4, 2, 4, 4, 1, 0, 5, 2, 0, 5, 2, 4, 6, 1, 3, 3, 3, 3, 6, 2, 6, 6], [1, 4, 2, 1, 4, 4, 0, 5, 5, 1, 4, 2, 0, 5, 2, 0, 5, 6, 1, 3, 2, 3, 3, 6, 3, 6, 6], [1, 4, 4, 1, 5, 5, 2, 5, 0, 1, 4, 6, 2, 4, 0, 2, 5, 0, 1, 6, 6, 3, 3, 6, 2, 3, 3], [1, 1, 1, 1, 4, 3, 2, 4, 4, 5, 5, 3, 0, 4, 3, 2, 2, 6, 0, 5, 3, 0, 5, 6, 2, 6, 6], [1, 4, 4, 1, 4, 6, 2, 6, 6, 1, 5, 4, 5, 5, 0, 2, 2, 6, 1, 5, 0, 3, 3, 0, 2, 3, 3], [1, 1, 1, 1, 4, 3, 2, 4, 4, 5, 5, 6, 2, 4, 3, 2, 0, 3, 5, 6, 6, 5, 0, 6, 2, 0, 3], [1, 4, 0, 1, 0, 0, 2, 5, 5, 1, 4, 4, 2, 5, 4, 2, 5, 6, 1, 3, 3, 3, 3, 6, 2, 6, 6], [1, 4, 2, 1, 0, 5, 0, 0, 5, 1, 4, 2, 4, 4, 2, 6, 5, 5, 1, 3, 2, 6, 3, 3, 6, 6, 3], [1, 4, 4, 1, 4, 6, 2, 6, 6, 1, 0, 4, 0, 0, 5, 2, 2, 6, 1, 5, 5, 3, 3, 5, 2, 3, 3], [1, 5, 5, 1, 4, 5, 2, 4, 4, 1, 5, 6, 2, 4, 0, 2, 0, 0, 1, 6, 6, 3, 3, 6, 2, 3, 3], [1, 6, 6, 1, 3, 6, 5, 5, 2, 1, 3, 6, 5, 3, 2, 5, 4, 2, 1, 3, 0, 4, 0, 0, 4, 4, 2], [1, 4, 4, 1, 5, 5, 3, 5, 2, 1, 4, 6, 3, 4, 2, 3, 5, 2, 1, 6, 6, 3, 0, 6, 0, 0, 2]]
